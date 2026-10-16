@@ -93,10 +93,13 @@ All variables in `.env.example`:
 |----------|----------|-------------|
 | `APP_ENV` | Yes | `dev` or `prod` |
 | `DEMO_MODE` | Yes | Enables demo accounts & guest endpoints |
+| `DEMO_ALLOW_ADMIN` | No (default `false`) | Enables the `admin@demo.recircle` demo account; only enable for a private presenter demo |
+| `DEMO_TRAFFIC` | No (default `false`) | Starts simulated twin traffic when demo mode is enabled |
 | `DATABASE_URL` | Yes | SQLite path or Postgres URL |
 | `JWT_SECRET` | Yes | Token signing secret (32+ chars) |
-| `JWT_ACCESS_MINUTES` | Yes | Access token lifetime (default 15) |
+| `JWT_ACCESS_MINUTES` | Yes | Access token lifetime (default 60) |
 | `CORS_ORIGINS` | Yes | Exact allowed frontend origins |
+| `FORWARDED_ALLOW_IPS` | No | Trusted reverse-proxy IPs/CIDRs for Uvicorn; set to the actual proxy only when deployed behind one |
 | `MODEL_PATH` | Yes | Path to trained weights (`.pt`) |
 | `CONFIDENCE_THRESHOLD` | Yes | Unsure cutoff (default 0.60) |
 | `MAX_UPLOAD_MB` | Yes | Upload size limit (default 5) |
@@ -107,7 +110,7 @@ All variables in `.env.example`:
 | `LLM_FALLBACK_PROVIDER` | Yes | Fallback provider |
 | `LLM_FALLBACK_MODEL` | Yes | Fallback model |
 | `LLM_FALLBACK_API_KEY` | Yes | Fallback API key |
-| `LLM_TIMEOUT_SECONDS` | Yes | Per-call timeout (default 20) |
+| `LLM_TIMEOUT_SECONDS` | Yes | Per-call timeout (default 60) |
 | `VITE_API_BASE_URL` | Yes | Backend base URL for frontend |
 
 ---
@@ -132,7 +135,11 @@ All variables in `.env.example`:
 
 ---
 
-## Demo Credentials (when DEMO_MODE=true)
+## Demo Credentials
+
+Guest, resident, and manager demo access requires `DEMO_MODE=true`. The demo admin account
+is available only when **both** `DEMO_MODE=true` and `DEMO_ALLOW_ADMIN=true`; keep admin
+access disabled on public deployments.
 
 | Role | Email | Password |
 |------|-------|----------|
@@ -270,5 +277,5 @@ DEMO_MODE=true
 # Demo accounts:
 #   Resident: resident@demo.recircle / demo123
 #   Manager:  manager@demo.recircle  / demo123
-#   Admin:    admin@demo.recircle    / demo123
+#   Admin:    admin@demo.recircle    / demo123 (requires DEMO_ALLOW_ADMIN=true)
 ```

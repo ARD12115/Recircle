@@ -191,8 +191,8 @@
 .site-header {
   z-index: var(--z-sticky);
   color: #fff;
-  background: var(--ink);
-  border-bottom: 4px solid var(--ink);
+  background: #1b1030;
+  border-bottom: 4px solid #1b1030;
   box-shadow: 0 8px 0 rgb(27 16 48 / 0.14);
 }
 
@@ -282,7 +282,7 @@
 
 .site-footer {
   color: #fff;
-  background: var(--ink);
+  background: #1b1030;
   border-top: 4px solid var(--pink);
 }
 
@@ -338,11 +338,11 @@
   left: 1.5rem;
   z-index: 1;
   padding: 1.25rem;
-  border: 3px solid var(--ink);
+  border: 3px solid #1b1030;
   border-radius: 1.25rem;
-  color: var(--ink);
+  color: #1b1030;
   background: #fff;
-  box-shadow: var(--hard-sm);
+  box-shadow: 3px 3px 0 #1b1030;
 }
 
 .hero-caption span:first-child { color: var(--pink); }
@@ -351,8 +351,9 @@
 .feature-card {
   min-height: 15rem;
   padding: 1.5rem;
-  border: 3px solid var(--ink);
-  box-shadow: var(--hard);
+  border: 3px solid #1b1030;
+  color: #1b1030;
+  box-shadow: 5px 5px 0 #1b1030;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
@@ -365,17 +366,17 @@
 }
 
 .feature-card-primary {
-  color: var(--ink);
+  color: #1b1030;
   background: var(--lime);
 }
 
 .feature-card-warm {
-  color: var(--ink);
+  color: #1b1030;
   background: #ffb36b;
 }
 
 .feature-card-green {
-  color: var(--ink);
+  color: #1b1030;
   background: #bfe0ff;
 }
 
@@ -416,9 +417,9 @@
   padding: 1.75rem;
   border-radius: 1.75rem;
   color: #fff;
-  background: var(--ink);
-  border: 3px solid var(--ink);
-  box-shadow: var(--hard);
+  background: #1b1030;
+  border: 3px solid #1b1030;
+  box-shadow: 5px 5px 0 #1b1030;
 }
 
 .trend-empty {
@@ -492,6 +493,18 @@
 
 @keyframes ticker-scroll {
   to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    width: auto;
+    flex-wrap: wrap;
+    animation: none;
+  }
+
+  .ticker-track span:nth-child(n + 9) {
+    display: none;
+  }
 }
 
 .camera-frame {

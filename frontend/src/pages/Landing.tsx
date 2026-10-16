@@ -129,6 +129,9 @@ export function Landing() {
       </section>
 
       <div className="ticker" aria-label="Examples of what ReCircle sorts">
+        <ul className="sr-only">
+          {TICKER.map(item => <li key={item}>{item}</li>)}
+        </ul>
         <div className="ticker-track" aria-hidden="true">
           {[...TICKER, ...TICKER].map((item, index) => <span key={`${item}-${index}`}>{item}</span>)}
         </div>

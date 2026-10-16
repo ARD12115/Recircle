@@ -53,20 +53,10 @@ def process_image(image_bytes: bytes) -> Image.Image:
             detail=f"Image too large ({image.width}x{image.height}). Max {MAX_PIXELS} pixels",
         )
     
-    # Apply EXIF orientation before discarding metadata.
-    image = ImageOps.exif_transpose(image)
-    data = list(image.getdata())
-    image_without_exif = Image.new(image.mode, image.size)
-    image_without_exif.putdata(data)
-    
-    # Convert to RGB if needed
-    if image_without_exif.mode != "RGB":
-        image_without_exif = image_without_exif.convert("RGB")
-    
-    # Downscale if too large (max 1024px on longest side)
-    max_dim = 1024
-    if max(image_without_exif.width, image_without_exif.height) > max_dim:
-        image_without_exif.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+    # Orient and downscale before re-encoding to avoid copying full-resolution pixels.
+    image = ImageOps.exif_transpose(image).convert("RGB")
+    image.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
+    image_without_exif = image
     
     # Re-encode as JPEG (quality 0.85) to normalize
     buffer = io.BytesIO()

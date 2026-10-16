@@ -57,6 +57,7 @@ class DemoTrafficGenerator:
         
         while self.running:
             try:
+                scan_events = []
                 async with async_session_maker() as db:
                     for _ in range(random.randint(1, 3)):
                         source_id = random.choice(source_nodes)
@@ -87,7 +88,7 @@ class DemoTrafficGenerator:
                         }.get(predicted_class, 14)
                         await increment_edge_weight(db, source_id, bin_id, 1.0)
 
-                        await broadcast_event("scan.created", {
+                        scan_events.append({
                             "scan_id": scan.id,
                             "predicted_class": predicted_class,
                             "subtype": "demo",
@@ -95,6 +96,10 @@ class DemoTrafficGenerator:
                             "source_node_id": source_id,
                             "confirmed_bin": None,
                         })
+                    await db.commit()
+
+                for event in scan_events:
+                    await broadcast_event("scan.created", event)
                 
                 # Run simulation tick periodically
                 if random.random() < 0.3:

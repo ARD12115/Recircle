@@ -3,7 +3,7 @@ import { twinApi } from '../api/client'
 import { useAuthStore } from '../stores/ui'
 
 export function useTwinStream(onMessage: (event: MessageEvent) => void) {
-  const { accessToken } = useAuthStore.getState()
+  const accessToken = useAuthStore(state => state.accessToken)
   const eventSourceRef = useRef<EventSource | null>(null)
   const [connected, setConnected] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
@@ -18,11 +18,7 @@ export function useTwinStream(onMessage: (event: MessageEvent) => void) {
         eventSourceRef.current.close()
       }
       
-      const url = new URL(twinApi.stream())
-      if (accessToken) {
-        url.searchParams.set('token', accessToken)
-      }
-      const es = new EventSource(url.toString())
+      const es = new EventSource(twinApi.stream(accessToken))
       eventSourceRef.current = es
       
       es.onopen = () => {

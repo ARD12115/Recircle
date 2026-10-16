@@ -87,20 +87,26 @@ async def generate_advice(
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": USER_PROMPT_TEMPLATE.format(input_json=json.dumps(input_data, indent=2))},
     ]
-    
+
+    def fallback_response() -> AdviceResponse:
+        template = build_template_advice(metrics, contamination_causes, hotspots)
+        return AdviceResponse(**template, cached=True, provider="template")
+
     try:
         response_text = await llm_client.chat_completion(
             messages, temperature=0.1, max_tokens=1500
         )
         if not response_text:
-            return load_sample_advice()
+            logger.warning("Advisor returned an empty response; using data-derived advice")
+            return fallback_response()
         advice_data = json.loads(response_text)
         validated = validate_advice_output(advice_data, input_data)
         if not validated:
-            return load_sample_advice()
+            logger.warning("Advisor response failed validation; using data-derived advice")
+            return fallback_response()
     except Exception as exc:
-        logger.warning("Advisor generation failed; using sample advice", error=str(exc))
-        return load_sample_advice()
+        logger.warning("Advisor generation failed; using data-derived advice", error=str(exc))
+        return fallback_response()
 
     advice_log = AdviceLog(
         user_id=user_id,
@@ -111,6 +117,8 @@ async def generate_advice(
     db.add(advice_log)
     await db.commit()
     return AdviceResponse(**validated, cached=False, provider=settings.LLM_PRIMARY_PROVIDER)
+
+
 def derive_advisor_context(
     scans: List[Scan],
     nodes: List[TwinNode],

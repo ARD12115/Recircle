@@ -147,7 +147,7 @@ async def get_user_for_stream(
                     detail="Invalid token type",
                 )
             user = payload
-        except JWTError:
+        except (JWTError, HTTPException):
             pass
     if not user and credentials:
         user = await get_current_user(credentials)

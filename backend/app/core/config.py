@@ -2,8 +2,9 @@
 Application Configuration - Settings from Environment Variables
 """
 from functools import lru_cache
-from typing import List
-from pydantic_settings import BaseSettings, SettingsConfigDict
+import json
+from typing import Annotated, List
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from pydantic import field_validator
 
 
@@ -28,31 +29,34 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     
     # CORS
-    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    CORS_ORIGINS: Annotated[List[str], NoDecode] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def parse_cors_origins(cls, value: object) -> str:
-        if isinstance(value, list):
-            return ",".join(str(origin).strip() for origin in value if str(origin).strip())
-        if not isinstance(value, str):
+    def parse_cors_origins(cls, value: object) -> List[str]:
+        if isinstance(value, str):
+            value = value.strip()
+            if value.startswith("["):
+                try:
+                    value = json.loads(value)
+                except json.JSONDecodeError as exc:
+                    raise ValueError("CORS_ORIGINS contains invalid JSON") from exc
+            else:
+                value = value.split(",")
+        if not isinstance(value, list):
             raise ValueError("CORS_ORIGINS must be a comma-separated string or list")
-        value = value.strip()
-        if value.startswith("["):
-            import json
-
-            try:
-                origins = json.loads(value)
-            except json.JSONDecodeError as exc:
-                raise ValueError("CORS_ORIGINS contains invalid JSON") from exc
-            if not isinstance(origins, list):
-                raise ValueError("CORS_ORIGINS JSON value must be a list")
-            return ",".join(str(origin).strip() for origin in origins if str(origin).strip())
-        return value
+        return [
+            origin.strip()
+            for origin in value
+            if isinstance(origin, str) and origin.strip()
+        ]
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+        return self.CORS_ORIGINS
 
     # Demo controls
     DEMO_ALLOW_ADMIN: bool = False

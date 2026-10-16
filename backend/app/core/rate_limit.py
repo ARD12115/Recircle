@@ -1,7 +1,8 @@
 """
 Rate Limiting - Per-IP and per-user limits
 """
-from fastapi import Request, HTTPException, status
+from fastapi import Request
+from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 
@@ -19,11 +20,16 @@ limiter = Limiter(
 )
 
 
-def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
     """Custom handler for rate limit exceeded."""
-    raise HTTPException(
-        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-        detail=f"Rate limit exceeded: {exc.detail}",
+    return JSONResponse(
+        status_code=429,
+        content={
+            "error": {
+                "code": "rate_limited",
+                "message": "Too many requests. Wait a minute and retry.",
+            }
+        },
         headers={"Retry-After": "60"},
     )
 

@@ -4,13 +4,13 @@ ReCircle Backend - FastAPI Application Entry Point
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.core.rate_limit import limiter
+from app.core.rate_limit import limiter, rate_limit_exceeded_handler
+from app.core.request_limits import ScanRequestBodyLimitMiddleware
 from app.api.v1.router import api_router
 from app.db.session import init_db
 
@@ -42,19 +42,12 @@ def create_app() -> FastAPI:
     )
     app.state.limiter = limiter
     app.add_middleware(SlowAPIMiddleware)
+    app.add_middleware(
+        ScanRequestBodyLimitMiddleware,
+        max_bytes=settings.MAX_UPLOAD_MB * 1024 * 1024 + 64 * 1024,
+    )
 
-    @app.exception_handler(RateLimitExceeded)
-    async def rate_limit_exceeded(request: Request, exc: RateLimitExceeded):
-        return JSONResponse(
-            status_code=429,
-            content={
-                "error": {
-                    "code": "rate_limited",
-                    "message": "Too many requests. Wait a minute and retry.",
-                }
-            },
-            headers={"Retry-After": "60"},
-        )
+    app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
     
     # CORS
     app.add_middleware(

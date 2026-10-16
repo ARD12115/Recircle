@@ -55,6 +55,9 @@ async def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
+
+    if user.email.casefold() == "admin@demo.recircle" and not settings.DEMO_ALLOW_ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Demo admin access disabled")
     
     # Create tokens
     access_token = create_access_token(
@@ -90,19 +93,19 @@ async def refresh_token(
     request: Request,
     response: Response,
     body: Optional[RefreshRequest] = Body(default=None),
-    refresh_token: Optional[str] = None,
     authorization: Optional[str] = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     """Refresh access token using refresh token from cookie or body."""
-    if authorization and authorization.lower().startswith("bearer "):
-        refresh_token = authorization[7:].strip()
-    if not refresh_token and body:
-        refresh_token = body.refresh_token
-    if not refresh_token:
-        refresh_token = request.cookies.get("refresh_token")
-    
-    if not refresh_token:
+    token = (
+        authorization[7:].strip()
+        if authorization and authorization.lower().startswith("bearer ")
+        else None
+    )
+    token = token or (body.refresh_token if body else None)
+    token = token or request.cookies.get("refresh_token")
+
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token required",
@@ -110,7 +113,7 @@ async def refresh_token(
     
     from app.core.security import decode_token
     try:
-        payload = decode_token(refresh_token)
+        payload = decode_token(token)
         if payload.get("type") != "refresh":
             raise HTTPException(status_code=401, detail="Invalid token type")
     except Exception:
@@ -122,6 +125,8 @@ async def refresh_token(
     
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    if user.email.casefold() == "admin@demo.recircle" and not settings.DEMO_ALLOW_ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Demo admin access disabled")
     
     # Create new tokens (rotate refresh token)
     new_access = create_access_token(

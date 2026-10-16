@@ -3,17 +3,27 @@ Database Session and Models
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.engine import make_url
 from app.core.config import settings
 
 
 def _async_url(url: str) -> str:
-    if url.startswith("sqlite://"):
-        return url.replace("sqlite://", "sqlite+aiosqlite://", 1)
-    if url.startswith("postgres://"):
-        return url.replace("postgres://", "postgresql+asyncpg://", 1)
-    if url.startswith("postgresql://"):
-        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
+    parsed = make_url(url)
+    if parsed.get_backend_name() not in {"postgres", "postgresql"}:
+        if parsed.drivername == "sqlite":
+            return parsed.set(drivername="sqlite+aiosqlite").render_as_string(
+                hide_password=False
+            )
+        return url
+
+    query = dict(parsed.query)
+    sslmode = query.pop("sslmode", None)
+    if sslmode and "ssl" not in query:
+        query["ssl"] = sslmode
+    return parsed.set(
+        drivername="postgresql+asyncpg",
+        query=query,
+    ).render_as_string(hide_password=False)
 
 
 # Async engine
