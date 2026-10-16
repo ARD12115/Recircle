@@ -6,10 +6,12 @@ import { TwinResponse } from '../types'
 import { MetricCard } from '../components/twin/MetricCard'
 import ReactFlow, { Background, Controls, MiniMap } from 'react-flow-renderer'
 import 'react-flow-renderer/dist/style.css'
+import { useAuthStore } from '../stores/ui'
 
 export function Twin() {
   const [sseConnected, setSseConnected] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
+  const accessToken = useAuthStore(state => state.accessToken)
   
   const { data: twinData, isLoading, error, refetch } = useQuery({
     queryKey: ['twin'],
@@ -19,7 +21,7 @@ export function Twin() {
   
   useEffect(() => {
     // Connect to SSE
-    const es = new EventSource(twinApi.stream())
+    const es = new EventSource(twinApi.stream(accessToken))
     eventSourceRef.current = es
     
     es.onopen = () => setSseConnected(true)
@@ -33,7 +35,7 @@ export function Twin() {
       es.close()
       eventSourceRef.current = null
     }
-  }, [refetch])
+  }, [refetch, accessToken])
   
   if (isLoading && !twinData) {
     return (

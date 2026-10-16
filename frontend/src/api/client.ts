@@ -64,7 +64,8 @@ export const scanApi = {
 
 export const twinApi = {
   get: () => api.get<TwinResponse>('/twin'),
-  stream: () => `${API_BASE}/api/v1/twin/stream`,
+  stream: (accessToken = useAuthStore.getState().accessToken) =>
+    `${API_BASE}/api/v1/twin/stream${accessToken ? `?token=${encodeURIComponent(accessToken)}` : ''}`,
   simulate: (params: import('../types').SimulateParams) =>
     api.post<import('../types').SimulateResponse>('/simulate', params),
 }
