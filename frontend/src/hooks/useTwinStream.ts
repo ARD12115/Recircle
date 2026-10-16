@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { twinApi } from '../api/client'
+import { useAuthStore } from '../stores/ui'
 
 export function useTwinStream(onMessage: (event: MessageEvent) => void) {
+  const { accessToken } = useAuthStore.getState()
   const eventSourceRef = useRef<EventSource | null>(null)
   const [connected, setConnected] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
@@ -16,7 +18,11 @@ export function useTwinStream(onMessage: (event: MessageEvent) => void) {
         eventSourceRef.current.close()
       }
       
-      const es = new EventSource(twinApi.stream())
+      const url = new URL(twinApi.stream())
+      if (accessToken) {
+        url.searchParams.set('token', accessToken)
+      }
+      const es = new EventSource(url.toString())
       eventSourceRef.current = es
       
       es.onopen = () => {
@@ -54,7 +60,7 @@ export function useTwinStream(onMessage: (event: MessageEvent) => void) {
         eventSourceRef.current.close()
       }
     }
-  }, [onMessage])
+  }, [onMessage, accessToken])
   
   return { connected, reconnecting }
 }

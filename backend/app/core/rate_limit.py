@@ -3,10 +3,20 @@ Rate Limiting - Per-IP and per-user limits
 """
 from fastapi import Request, HTTPException, status
 from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
+
+def get_client_ip(request: Request) -> str:
+    """Get client IP, taking into account X-Forwarded-For and X-Real-IP headers."""
+    if forwarded := request.headers.get("X-Forwarded-For"):
+        # X-Forwarded-For can be a comma-separated list of IPs
+        # The first IP is the client IP
+        return forwarded.split(",")[0].strip()
+    if real_ip := request.headers.get("X-Real-IP"):
+        return real_ip.strip()
+    # Fallback to remote address
+    return request.client.host if request.client else "127.0.0.1"
 
 # Limiter instance
 limiter = Limiter(

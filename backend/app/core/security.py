@@ -3,7 +3,7 @@ Security - Hashing, JWT, Role Dependencies
 """
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from passlib.context import CryptContext
@@ -128,3 +128,40 @@ async def get_demo_user(role: str = "resident") -> dict:
         "role": role,
         "demo": True,
     }
+
+
+async def get_user_for_stream(
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> dict:
+    """Get user from JWT token in query param or header for SSE endpoints."""
+    # Try to get token from query param
+    token = request.query_params.get("token")
+    user = None
+    if token:
+        try:
+            payload = decode_token(token)
+            if payload.get("type") != "access":
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid token type",
+                )
+            user = payload
+        except JWTError:
+            pass
+    if not user and credentials:
+        user = await get_current_user(credentials)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    # Now check role: we want to allow guest, resident, manager, admin
+    user_role = user.get("role", "guest")
+    if user_role not in ["guest", "resident", "manager", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Requires one of roles: guest, resident, manager, admin",
+        )
+    return user

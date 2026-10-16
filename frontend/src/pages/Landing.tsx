@@ -70,11 +70,11 @@ export function Landing() {
         <figure className="hero-art">
           <img
             className="hero-photo"
-            src="https://picsum.photos/seed/recircle-campus-circularity/1400/1100"
-            alt="Colorful reusable and recyclable materials arranged in a circular composition"
+            src="/recycling-bins.jpg"
+            alt="Yellow, blue, red, and green recycling bins lined up on a campus walkway"
             width="1400"
-            height="1100"
-            fetchPriority="high"
+            height="928"
+            loading="eager"
           />
           <figcaption className="hero-caption">
             <span className="text-xs font-bold uppercase tracking-[0.16em] text-lime-200">One campus. Many loops.</span>

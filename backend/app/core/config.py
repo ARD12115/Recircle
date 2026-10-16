@@ -4,6 +4,7 @@ Application Configuration - Settings from Environment Variables
 from functools import lru_cache
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 
 
 class Settings(BaseSettings):
@@ -27,7 +28,12 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+    @field_validator('CORS_ORIGINS', mode='before')
+    @classmethod
+    def parse_cors_origins(cls, v: str) -> List[str]:
+        return [origin.strip() for origin in v.split(",") if origin.strip()]
     
     # Model
     MODEL_PATH: str = "./app/data/weights/model.pt"
