@@ -9,6 +9,7 @@ from app.core.rate_limit import simulate_limiter
 from app.db.session import get_db
 from app.schemas.twin import SimulateRequest, SimulateResponse
 from app.services.twin.engine import TwinEngine, create_initial_state
+from app.models.twin import TwinSnapshot
 
 router = APIRouter()
 
@@ -25,4 +26,6 @@ async def run_simulation(
     initial_state = create_initial_state()
     
     result = engine.run_simulation(initial_state, request)
+    db.add(TwinSnapshot(tick=request.ticks, metrics_json={"deltas": result.deltas}))
+    await db.commit()
     return result

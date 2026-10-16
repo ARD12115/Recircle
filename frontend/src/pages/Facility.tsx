@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Card } from '../../components/ui/Card'
-import { twinApi } from '../../api/client'
-import { MetricCard } from '../../components/twin/MetricCard'
+import { Card } from '../components/ui/Card'
+import { twinApi } from '../api/client'
+import { MetricCard } from '../components/twin/MetricCard'
 
 export function Facility() {
   const { data: twinData } = useQuery({

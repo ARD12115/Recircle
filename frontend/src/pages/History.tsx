@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Card } from '../../components/ui/Card'
-import { scanApi } from '../../api/client'
-import { ScanHistoryItem } from '../../types'
+import { Card } from '../components/ui/Card'
+import { scanApi } from '../api/client'
+import { ScanHistoryItem } from '../types'
 import { format } from 'date-fns'
 
 export function History() {

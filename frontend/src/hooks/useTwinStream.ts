@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { twinApi } from '../../api/client'
+import { twinApi } from '../api/client'
 
 export function useTwinStream(onMessage: (event: MessageEvent) => void) {
   const eventSourceRef = useRef<EventSource | null>(null)

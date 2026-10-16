@@ -20,7 +20,7 @@ class Guidance(BaseModel):
 
 class ScanResponse(BaseModel):
     scan_id: str
-    predicted_class: Literal["recyclable", "reusable", "biodegradable", "hazardous", "residual"]
+    predicted_class: Literal["recyclable", "reusable", "biodegradable", "hazardous", "residual", "unsure"]
     subtype: str
     confidence: float
     top3: List[Top3Item]
@@ -45,3 +45,12 @@ class ScanHistoryResponse(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class ScanConfirmationRequest(BaseModel):
+    confirmed_bin: Literal["recyclable", "reusable", "biodegradable", "hazardous", "residual"]
+
+
+class ScanConfirmationResponse(BaseModel):
+    scan_id: str
+    confirmed_bin: str

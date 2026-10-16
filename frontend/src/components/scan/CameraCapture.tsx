@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react'
-import { useScanSession } from '../../../stores/scanSession'
-import { processImageFile } from '../../../lib/image'
+import { useScanSession } from '../../stores/scanSession'
+import { processImageFile } from '../../lib/image'
 
 export function CameraCapture({ onCapture }: { onCapture: (file: File) => void }) {
   const { setImage, setPreviewUrl, setError, loading } = useScanSession()

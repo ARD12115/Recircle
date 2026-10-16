@@ -1,10 +1,12 @@
-import { ScanResult } from '../../../types/scan'
+import { ScanResult } from '../../types'
 
 interface ResultCardProps {
   result: ScanResult
   onConfirmBin: (bin: string) => void
   onRetake: () => void
   onReport: () => void
+  confirmedBin: string | null
+  confirming: boolean
 }
 
 const BIN_OPTIONS = [
@@ -15,7 +17,7 @@ const BIN_OPTIONS = [
   { id: 'residual', label: 'Residual/Landfill Bin', color: 'gray' },
 ]
 
-export function ResultCard({ result, onConfirmBin, onRetake, onReport }: ResultCardProps) {
+export function ResultCard({ result, onConfirmBin, onRetake, onReport, confirmedBin, confirming }: ResultCardProps) {
   const { predicted_class, subtype, confidence, top3, guidance } = result
   
   const classLabels: Record<string, string> = {
@@ -126,8 +128,10 @@ export function ResultCard({ result, onConfirmBin, onRetake, onReport }: ResultC
             {BIN_OPTIONS.map(bin => (
               <button
                 key={bin.id}
-                onClick={() => onConfirmBin(bin.label)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-colors ${
+                onClick={() => onConfirmBin(bin.id)}
+                disabled={Boolean(confirmedBin) || confirming}
+                aria-pressed={confirmedBin === bin.id}
+                className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                   bin.color === 'blue' ? 'border-blue-300 text-blue-700 hover:bg-blue-50' :
                   bin.color === 'amber' ? 'border-amber-300 text-amber-700 hover:bg-amber-50' :
                   bin.color === 'green' ? 'border-green-300 text-green-700 hover:bg-green-50' :

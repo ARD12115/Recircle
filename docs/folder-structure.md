@@ -147,7 +147,7 @@ recircle/
 | DATABASE_URL | API | SQLite path or Postgres URL |
 | JWT_SECRET, JWT_ACCESS_MINUTES | API | Token signing and lifetime |
 | CORS_ORIGINS | API | Exact allowed frontend origins |
-| MODEL_PATH, CONFIDENCE_THRESHOLD | API | Weights file and unsure cut-off |
+| MODEL_PATH, MODEL_CONFIG_PATH, CONFIDENCE_THRESHOLD | API | Exported weights, matching model config, and unsure cut-off; defaults point to `backend/app/data/weights/` and Docker Compose mounts that same export directory |
 | MAX_UPLOAD_MB, RATE_LIMIT_PER_MIN | API | Upload size and request limits |
 | LLM_PRIMARY_PROVIDER, LLM_PRIMARY_MODEL, LLM_PRIMARY_API_KEY | API | Main advisor model |
 | LLM_FALLBACK_PROVIDER, LLM_FALLBACK_MODEL, LLM_FALLBACK_API_KEY | API | Backup model |

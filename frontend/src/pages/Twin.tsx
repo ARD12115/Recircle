@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Card } from '../../components/ui/Card'
-import { twinApi } from '../../api/client'
-import { TwinResponse } from '../../types'
-import { MetricCard } from '../../components/twin/MetricCard'
+import { Card } from '../components/ui/Card'
+import { twinApi } from '../api/client'
+import { TwinResponse } from '../types'
+import { MetricCard } from '../components/twin/MetricCard'
+import ReactFlow, { Background, Controls, MiniMap } from 'react-flow-renderer'
+import 'react-flow-renderer/dist/style.css'
 
 export function Twin() {
   const [sseConnected, setSseConnected] = useState(false)
@@ -55,7 +57,34 @@ export function Twin() {
     )
   }
   
-  const twin = twinData?.data as TwinResponse
+  const twin = twinData?.data as TwinResponse | undefined
+  const nodeRows = new Map<string, number>()
+  const nodes = twin?.graph.nodes.map(node => {
+    const row = nodeRows.get(node.type) ?? 0
+    nodeRows.set(node.type, row + 1)
+    const columns: Record<string, number> = { source: 0, bin: 1, collection: 2, facility: 3 }
+    const count = Object.values(node.counts).reduce((sum, value) => sum + value, 0)
+    return {
+      id: String(node.id),
+      position: { x: (columns[node.type] ?? 0) * 240, y: row * 105 },
+      data: { label: `${node.name}${count ? ` · ${count} scanned` : ''}` },
+      style: {
+        borderRadius: 8,
+        border: '1px solid #cbd5e1',
+        background: node.type === 'source' ? '#eff6ff' : node.type === 'bin' ? '#f0fdf4' : '#f8fafc',
+        padding: 10,
+        width: 175,
+      },
+    }
+  }) ?? []
+  const edges = twin?.graph.edges.map(edge => ({
+    id: String(edge.id),
+    source: String(edge.from_id),
+    target: String(edge.to_id),
+    label: edge.weight > 0 ? String(edge.weight) : undefined,
+    animated: edge.weight > 0,
+    style: { strokeWidth: Math.min(5, 1 + edge.weight / 20) },
+  })) ?? []
   
   return (
     <div className="space-y-6">
@@ -73,26 +102,22 @@ export function Twin() {
           label="Diversion Rate"
           value={twin?.metrics.diversion_rate}
           format="percent"
-          trend={0}
         />
         <MetricCard
           label="Contamination"
           value={twin?.metrics.contamination_rate}
           format="percent"
-          trend={0}
           negative={true}
         />
         <MetricCard
           label="CO₂e Avoided"
           value={twin?.metrics.co2e_avoided_kg}
           format="kg"
-          trend={0}
         />
         <MetricCard
           label="Pickup Cost"
           value={twin?.metrics.pickup_cost}
           format="currency"
-          trend={0}
           negative={true}
         />
       </div>
@@ -100,12 +125,15 @@ export function Twin() {
       {/* Graph View */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Waste Flow Graph</h2>
-        <div className="aspect-video bg-gray-50 rounded-lg flex items-center justify-center">
-          {twin?.graph.nodes && twin.graph.nodes.length > 0 ? (
-            <div className="text-center text-gray-500">
-              <p className="mb-2">React Flow graph would render here</p>
-              <p className="text-sm">{twin.graph.nodes.length} nodes, {twin.graph.edges.length} edges</p>
-            </div>
+        <div className="h-[600px] bg-gray-50 rounded-lg" aria-label="Campus waste flow graph">
+          {error ? (
+            <p className="p-6 text-red-600" role="alert">Twin data could not be loaded.</p>
+          ) : twin?.graph.nodes.length ? (
+            <ReactFlow nodes={nodes} edges={edges} fitView>
+              <Background />
+              <Controls />
+              <MiniMap />
+            </ReactFlow>
           ) : (
             <p className="text-gray-500">Loading graph...</p>
           )}

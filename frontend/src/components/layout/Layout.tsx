@@ -1,4 +1,3 @@
-import { ReactNode } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../stores/ui'
 import { useScanSession } from '../../stores/scanSession'

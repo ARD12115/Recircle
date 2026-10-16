@@ -15,6 +15,7 @@ interface AuthState {
   refreshToken: string | null
   isDemo: boolean
   setTokens: (access: string, refresh: string, user: User) => void
+  setAccessToken: (access: string) => void
   setDemoMode: (enabled: boolean) => void
   logout: () => void
 }
@@ -27,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       isDemo: false,
       setTokens: (access, refresh, user) => set({ accessToken: access, refreshToken: refresh, user, isDemo: user.demo || false }),
+      setAccessToken: (accessToken) => set({ accessToken }),
       setDemoMode: (enabled) => set({ isDemo: enabled }),
       logout: () => set({ user: null, accessToken: null, refreshToken: null, isDemo: false }),
     }),

@@ -1,23 +1,23 @@
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react/query'
-import { Card } from '../../components/ui/Card'
-import { Button } from '../../components/ui/Button'
-import { twinApi, simulateApi } from '../../api/client'
-import { SimulateParams, SimulateResponse } from '../../types'
-import { MetricCard } from '../../components/twin/MetricCard'
-import { useScenarioStore } from '../../stores/scenario'
+import { useMutation } from '@tanstack/react-query'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { twinApi } from '../api/client'
+import { SimulateParams, SimulateResponse } from '../types'
+import { MetricCard } from '../components/twin/MetricCard'
+import { useScenarioStore } from '../stores/scenario'
 
 export function Simulate() {
   const { 
     compliance, awarenessBoost, pickupFrequency, binsPerStream, facilityYieldOverride,
-    setCompliance, setAwarenessBoost, setPickupFrequency, setBinsPerStream, setFacilityYieldOverride, reset
+    setCompliance, setAwarenessBoost, setPickupFrequency, setBinsPerStream, reset
   } = useScenarioStore()
   
   const [simulateResult, setSimulateResult] = useState<SimulateResponse | null>(null)
   const [running, setRunning] = useState(false)
   
   const simulateMutation = useMutation({
-    mutationFn: (params: SimulateParams) => simulateApi.simulate(params),
+    mutationFn: (params: SimulateParams) => twinApi.simulate(params),
     onMutate: () => setRunning(true),
     onSuccess: (response) => {
       setSimulateResult(response.data)

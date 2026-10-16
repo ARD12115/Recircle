@@ -1,11 +1,28 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
-export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className = '', children, disabled, loading, ...props }, ref) => {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean
+  variant?: 'primary' | 'secondary' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className = '', children, disabled, loading, variant = 'primary', size = 'md', ...props }, ref) => {
+    const variantClass = {
+      primary: 'btn-primary',
+      secondary: 'btn-secondary',
+      ghost: 'btn-ghost',
+    }[variant]
+    const sizeClass = {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'px-4 py-2',
+      lg: 'text-lg px-6 py-3',
+    }[size]
+
     return (
       <button
         ref={ref}
-        className={`btn-primary ${className} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`${variantClass} ${sizeClass} ${className} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={disabled || loading}
         {...props}
       >

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Card } from '../../components/ui/Card'
-import { Button } from '../../components/ui/Button'
-import { authApi } from '../../api/client'
-import { useAuthStore } from '../../stores/ui'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { authApi } from '../api/client'
+import { useAuthStore } from '../stores/ui'
 
 export function Login() {
   const navigate = useNavigate()

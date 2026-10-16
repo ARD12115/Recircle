@@ -1,6 +1,6 @@
 export interface ScanResult {
   scan_id: string
-  predicted_class: string
+  predicted_class: 'recyclable' | 'reusable' | 'biodegradable' | 'hazardous' | 'residual' | 'unsure'
   subtype: string
   confidence: number
   top3: Array<{ class_name: string; confidence: number }>
@@ -62,6 +62,11 @@ export interface Metrics {
 export interface TwinResponse {
   graph: TwinGraph
   metrics: Metrics
+}
+
+export interface ScanConfirmationResponse {
+  scan_id: string
+  confirmed_bin: string
 }
 
 export interface SimulateParams {

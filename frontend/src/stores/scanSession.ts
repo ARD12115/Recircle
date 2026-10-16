@@ -1,14 +1,15 @@
 import { create } from 'zustand'
+import { ScanResult } from '../types'
 
 interface ScanSessionState {
   image: File | null
   previewUrl: string | null
-  result: any | null
+  result: ScanResult | null
   loading: boolean
   error: string | null
   setImage: (file: File | null) => void
   setPreviewUrl: (url: string | null) => void
-  setResult: (result: any) => void
+  setResult: (result: ScanResult | null) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clear: () => void

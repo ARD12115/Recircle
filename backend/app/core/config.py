@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     
     # Model
-    MODEL_PATH: str = "./data/weights/model.pt"
-    MODEL_CONFIG_PATH: str = "./data/weights/model_config.json"
+    MODEL_PATH: str = "./app/data/weights/model.pt"
+    MODEL_CONFIG_PATH: str = "./app/data/weights/model_config.json"
     CONFIDENCE_THRESHOLD: float = 0.60
     
     # Upload & Rate Limits

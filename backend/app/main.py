@@ -16,7 +16,7 @@ from app.db.session import init_db
 async def lifespan(app: FastAPI):
     # Startup
     setup_logging()
-    init_db()
+    await init_db()
     # Load ML model at startup (avoid cold starts)
     from app.services.vision.classifier import load_model
     load_model()

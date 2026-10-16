@@ -1,7 +1,6 @@
-import { NavLink } from 'react-router-dom'
-import { Button } from '../../components/ui/Button'
-import { Card } from '../../components/ui/Card'
-import { useAuthStore } from '../../stores/ui'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
+import { useAuthStore } from '../stores/ui'
 
 export function Landing() {
   const { isDemo, setDemoMode } = useAuthStore()
