@@ -89,7 +89,7 @@ export function Scan() {
               id="scan-source"
               value={sourceNodeId ?? ''}
               onChange={event => setSourceNodeId(event.target.value ? Number(event.target.value) : null)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 mb-4"
+              className="input mb-4"
             >
               <option value="">Choose a campus location</option>
               {sources.map(source => <option key={source.id} value={source.id}>{source.name}</option>)}

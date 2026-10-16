@@ -1,7 +1,7 @@
 """
 Simulate Endpoint - POST /simulate
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import get_guest_user
@@ -17,7 +17,8 @@ router = APIRouter()
 @router.post("", response_model=SimulateResponse)
 @simulate_limiter.limit("20/minute")
 async def run_simulation(
-    request: SimulateRequest,
+    request: Request,
+    simulation: SimulateRequest,
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_guest_user),
 ):
@@ -25,7 +26,7 @@ async def run_simulation(
     engine = TwinEngine(seed=42)
     initial_state = create_initial_state()
     
-    result = engine.run_simulation(initial_state, request)
-    db.add(TwinSnapshot(tick=request.ticks, metrics_json={"deltas": result.deltas}))
+    result = engine.run_simulation(initial_state, simulation)
+    db.add(TwinSnapshot(tick=simulation.ticks, metrics_json={"deltas": result.deltas}))
     await db.commit()
     return result

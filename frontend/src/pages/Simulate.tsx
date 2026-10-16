@@ -117,6 +117,11 @@ export function Simulate() {
             {running ? 'Running...' : 'Run Simulation'}
           </Button>
         </div>
+        {simulateMutation.isError && (
+          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800" role="alert">
+            The scenario could not be calculated. Check the connection and try again.
+          </p>
+        )}
       </Card>
       
       {/* Results */}

@@ -125,7 +125,7 @@ export function Twin() {
       {/* Graph View */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Waste Flow Graph</h2>
-        <div className="h-[600px] bg-gray-50 rounded-lg" aria-label="Campus waste flow graph">
+        <div className="twin-graph h-[600px]" aria-label="Campus waste flow graph">
           {error ? (
             <p className="p-6 text-red-600" role="alert">Twin data could not be loaded.</p>
           ) : twin?.graph.nodes.length ? (

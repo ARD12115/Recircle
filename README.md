@@ -10,6 +10,90 @@ ReCircle helps people sort waste correctly and shows how individual actions chan
 
 ---
 
+## Current Project Status (as of 2026-10-16)
+
+- ✅ Frontend skeleton: React + Vite + TS + Tailwind; pages/components exist
+- ✅ Backend skeleton: FastAPI with auth, CORS, lifespan events, routers
+- ✅ API contracts: Axios client with auth refresh, endpoints defined
+- ✅ Model architecture: Classifier loads MobileNetV3‑Large, fine‑tunes head
+- ✅ Label mapping: `classes.yaml` maps 12 HF source classes → 5 output classes
+- ✅ Dataset pipeline: `prepare_dataset.py` loads HF dataset, splits, copies images
+- ✅ Model export: `export.py` copies `best.pt` + config to backend weights dir
+- ✅ Environment template: `.env.example` lists all required variables
+- ✅ Docker compose: Defines `api`, `web`, optional `db` (Postgres)
+- ✅ Logging & utils: `scripts/log_view.py`, etc., for log inspection
+- ✅ Goal tracking: `.goals/reconnect-demo-path/` contains acceptance criteria
+
+### Pending / In Progress
+
+- 🔄 **Dataset preparation**: `ml/data/prepared/` currently empty; `prepare_dataset.py` is running (background) – ~184/15,520 images processed so far
+- 🔄 **Model training**: No trained weights yet (`ml/weights/` empty); training pending after dataset preparation completes
+- 🔄 **Backend virtual environment**: Not yet created (`.venv` missing) – needed to install Python dependencies
+- 🔄 **Environment variables**: `.env` contains placeholders for `JWT_SECRET`, `LLM_PRIMARY_API_KEY`, `LLM_FALLBACK_API_KEY` – need real values
+- 🔄 **Frontend build**: Need to verify `npm run build` succeeds; may require TypeScript config fixes
+- 🔄 **Model export**: Will run after training to copy weights to `backend/app/data/weights/`
+- 🔄 **Scan → Twin → Advisor flow**: Blocked without trained model; once model is ready, scan classification will feed twin and advisor
+
+### Next Steps to Unblock Demo
+
+1. Let dataset preparation finish (monitor `ml/data/temp_hf_images/` count decreasing)
+2. Run training: `cd ml && python scripts/train.py`
+3. Export model: `cd ml && python scripts/export.py`
+4. Create backend venv and install deps: `cd backend && python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt`
+5. Edit `.env` with real API keys (JWT secret, LLM keys)
+6. Verify frontend build: `cd frontend && npm run build`
+7. Run full stack: `make dev` (or `docker compose up --build`)
+
+---
+
+## One-Paragraph Pitch
+
+ReCircle helps people sort waste correctly and shows how individual actions change a whole recycling system. A user points a camera at an item; computer vision classifies it into recyclable, reusable, biodegradable, hazardous, or residual waste. Every scan feeds a digital twin of a campus waste flow (source → bin → collection → facility). A generative AI advisor reads the twin's computed metrics and gives personalized, grounded recommendations that push the system toward a circular economy.
+
+---
+
+## Current Project Status (as of 2026-10-16)
+
+- ✅ Frontend skeleton: React + Vite + TS + Tailwind; pages/components exist
+- ✅ Backend skeleton: FastAPI with auth, CORS, lifespan events, routers
+- ✅ API contracts: Axios client with auth refresh, endpoints defined
+- ✅ Model architecture: Classifier loads MobileNetV3‑Large, fine‑tunes head
+- ✅ Label mapping: `classes.yaml` maps 12 HF source classes → 5 output classes
+- ✅ Dataset pipeline: `prepare_dataset.py` loads HF dataset, splits, copies images
+- ✅ Model export: `export.py` copies `best.pt` + config to backend weights dir
+- ✅ Environment template: `.env.example` lists all required variables
+- ✅ Docker compose: Defines `api`, `web`, optional `db` (Postgres)
+- ✅ Logging & utils: `scripts/log_view.py`, etc., for log inspection
+- ✅ Goal tracking: `.goals/reconnect-demo-path/` contains acceptance criteria
+
+### Pending / In Progress
+
+- 🔄 **Dataset preparation**: `ml/data/prepared/` currently empty; `prepare_dataset.py` is running (background) – ~184/15,520 images processed so far
+- 🔄 **Model training**: No trained weights yet (`ml/weights/` empty); training pending after dataset preparation completes
+- 🔄 **Backend virtual environment**: Not yet created (`.venv` missing) – needed to install Python dependencies
+- 🔄 **Environment variables**: `.env` contains placeholders for `JWT_SECRET`, `LLM_PRIMARY_API_KEY`, `LLM_FALLBACK_API_KEY` – need real values
+- 🔄 **Frontend build**: Need to verify `npm run build` succeeds; may require TypeScript config fixes
+- 🔄 **Model export**: Will run after training to copy weights to `backend/app/data/weights/`
+- 🔄 **Scan → Twin → Advisor flow**: Blocked without trained model; once model is ready, scan classification will feed twin and advisor
+
+### Next Steps to Unblock Demo
+
+1. Let dataset preparation finish (monitor `ml/data/temp_hf_images/` count decreasing)
+2. Run training: `cd ml && python scripts/train.py`
+3. Export model: `cd ml && python scripts/export.py`
+4. Create backend venv and install deps: `cd backend && python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt`
+5. Edit `.env` with real API keys (JWT secret, LLM keys)
+6. Verify frontend build: `cd frontend && npm run build`
+7. Run full stack: `make dev` (or `docker compose up --build`)
+
+---
+
+## One-Paragraph Pitch
+
+ReCircle helps people sort waste correctly and shows how individual actions change a whole recycling system. A user points a camera at an item; computer vision classifies it into recyclable, reusable, biodegradable, hazardous, or residual waste. Every scan feeds a digital twin of a campus waste flow (source → bin → collection → facility). A generative AI advisor reads the twin's computed metrics and gives personalized, grounded recommendations that push the system toward a circular economy.
+
+---
+
 ## Architecture
 
 ```

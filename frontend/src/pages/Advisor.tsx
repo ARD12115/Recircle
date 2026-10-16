@@ -36,15 +36,20 @@ export function Advisor() {
     generateMutation.mutate()
   }
   
-  const handleChatSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!chatInput.trim() || chatLoading) return
+  const sendMessage = (content: string) => {
+    const trimmedContent = content.trim()
+    if (!trimmedContent || chatLoading) return
     
-    const userMessage = { role: 'user', content: chatInput }
+    const userMessage = { role: 'user', content: trimmedContent }
     setChatMessages(prev => [...prev, userMessage])
     setChatInput('')
     
     chatMutation.mutate([...chatMessages, userMessage])
+  }
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    sendMessage(chatInput)
   }
   
   return (
@@ -227,7 +232,7 @@ export function Advisor() {
                 key={i}
                 onClick={() => {
                   setChatInput(prompt)
-                  handleChatSubmit(new Event('submit') as any)
+                  sendMessage(prompt)
                 }}
                 className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
               >

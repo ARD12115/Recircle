@@ -77,7 +77,7 @@ export function CameraCapture({ onCapture }: { onCapture: (file: File) => void }
     <div className="space-y-4">
       {/* Camera View */}
       {!permissionDenied && (
-        <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden">
+        <div className="camera-frame relative aspect-video overflow-hidden rounded-2xl">
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
@@ -127,7 +127,7 @@ export function CameraCapture({ onCapture }: { onCapture: (file: File) => void }
       )}
       
       {/* Upload Fallback */}
-      <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+      <div className="upload-zone rounded-2xl border-2 border-dashed border-gray-300 p-8 text-center">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"

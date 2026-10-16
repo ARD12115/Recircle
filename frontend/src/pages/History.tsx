@@ -5,7 +5,7 @@ import { ScanHistoryItem } from '../types'
 import { format } from 'date-fns'
 
 export function History() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['scans'],
     queryFn: () => scanApi.history(),
   })
@@ -25,6 +25,11 @@ export function History() {
             </Card>
           ))}
         </div>
+      ) : isError ? (
+        <Card className="p-8 text-center" role="alert">
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">History could not load</h2>
+          <p className="text-gray-600">Refresh the page to try again.</p>
+        </Card>
       ) : scans.length === 0 ? (
         <Card className="p-8 text-center">
           <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +40,8 @@ export function History() {
         </Card>
       ) : (
         <Card className="overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="history-table w-full">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
@@ -69,12 +75,13 @@ export function History() {
                     {Math.round(scan.confidence * 100)}%
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {scan.confirmed_bin || '—'}
+                    {scan.confirmed_bin || 'Not confirmed'}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
     </div>

@@ -8,7 +8,7 @@ interface MetricCardProps {
 
 export function MetricCard({ label, value, format, trend, negative = false }: MetricCardProps) {
   const formatValue = (v: number | undefined) => {
-    if (v === undefined) return '—'
+    if (v === undefined) return 'N/A'
     switch (format) {
       case 'percent':
         return `${(v * 100).toFixed(1)}%`
@@ -41,10 +41,10 @@ export function MetricCard({ label, value, format, trend, negative = false }: Me
   )
   
   return (
-    <div className="card p-6">
+    <div className="metric-card card p-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{label}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-gray-600">{label}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1 tabular-nums">{formatValue(value)}</p>
         </div>
         {trend !== undefined && (

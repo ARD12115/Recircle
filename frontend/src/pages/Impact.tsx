@@ -55,10 +55,16 @@ export function Impact() {
       {/* Trend Charts Placeholder */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Trends (Last 30 Days)</h2>
-        <div className="aspect-video bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">Recharts line charts would render here</p>
+        <div className="trend-empty">
+          <span className="trend-empty-mark" aria-hidden="true">30</span>
+          <div>
+            <h3 className="mb-1 font-bold text-gray-900">Metric history is not available yet</h3>
+            <p className="max-w-2xl text-sm leading-relaxed text-gray-600">
+              This build shows current values from saved scan confirmations. It does not yet store a daily history for trend charts.
+            </p>
+          </div>
         </div>
-      </ Card>
+      </Card>
       
       {/* Top Actions from Advisor */}
       {advice && advice.actions.length > 0 && (
