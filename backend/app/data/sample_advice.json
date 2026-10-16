@@ -1,0 +1,39 @@
+{
+  "summary": "Campus waste system shows 62% diversion with 18% contamination in target bins. 1,247 items tracked, 773 recovered. Canteen organic waste and Hostel A recyclables are top contamination sources.",
+  "issues": [
+    "Recyclable bin contamination at 18% cuts recycling yield from 85% to 55%",
+    "Canteen generates 60% biodegradable waste but 40% goes to residual",
+    "Hazardous items (batteries) found in general waste pose fire risk"
+  ],
+  "actions": [
+    {
+      "title": "Launch targeted bin signage campaign",
+      "why": "Contamination rate of 18% suggests confusion about what goes where",
+      "expected_impact": "Reduce contamination by 3-5 percentage points",
+      "effort": "low",
+      "owner": "facilities"
+    },
+    {
+      "title": "Add organic bins at Canteen with clear labeling",
+      "why": "Canteen generates 60% biodegradable waste but contamination is high",
+      "expected_impact": "Increase diversion by 8-12%",
+      "effort": "medium",
+      "owner": "management"
+    },
+    {
+      "title": "Hazardous waste awareness drive for batteries",
+      "why": "Batteries found in general waste pose fire risk in compactors",
+      "expected_impact": "Eliminate hazardous in residual stream",
+      "effort": "low",
+      "owner": "residents"
+    }
+  ],
+  "reuse_ideas": [
+    "Glass jars → storage containers, planters, candle holders",
+    "Cardboard boxes → drawer organizers, compost brown material, kids' crafts",
+    "Old textiles → cleaning rags, pet bedding, tote bags",
+    "Plastic containers → seed starters, hardware organizers, paint trays",
+    "Aluminum cans → candle molds, herb planters, wind chimes"
+  ],
+  "disclaimer": "Guidance is informational. Local disposal rules may vary. Consult facility staff for hazardous items."
+}

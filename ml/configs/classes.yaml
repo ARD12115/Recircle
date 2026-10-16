@@ -1,0 +1,88 @@
+# ReCircle ML Configuration
+# Source label (from HF dataset sumn2u/garbage-classification-v2) -> Output class + Subtype
+# HF Model: AmadFR/ecovision_mobilenetv3 (MobileNetV3 Large, 10 classes)
+
+mappings:
+  - source: "battery"
+    output_class: "hazardous"
+    subtype: "battery"
+  - source: "biological"
+    output_class: "biodegradable"
+    subtype: "organic"
+  - source: "cardboard"
+    output_class: "recyclable"
+    subtype: "cardboard"
+  - source: "paper"
+    output_class: "recyclable"
+    subtype: "paper"
+  - source: "plastic"
+    output_class: "recyclable"
+    subtype: "plastic"
+  - source: "metal"
+    output_class: "recyclable"
+    subtype: "metal"
+  - source: "white-glass"
+    output_class: "recyclable"
+    subtype: "glass"
+  - source: "brown-glass"
+    output_class: "recyclable"
+    subtype: "glass"
+  - source: "green-glass"
+    output_class: "recyclable"
+    subtype: "glass"
+  - source: "clothes"
+    output_class: "reusable"
+    subtype: "textile"
+  - source: "shoes"
+    output_class: "reusable"
+    subtype: "footwear"
+  - source: "trash"
+    output_class: "residual"
+    subtype: "mixed"
+
+# Output classes in order (for model head)
+output_classes:
+  - "recyclable"
+  - "reusable"
+  - "biodegradable"
+  - "hazardous"
+  - "residual"
+
+# Subtypes per class (for guidance lookup)
+subtypes:
+  recyclable: ["paper", "cardboard", "plastic", "metal", "glass"]
+  reusable: ["textile", "footwear"]
+  biodegradable: ["organic"]
+  hazardous: ["battery"]
+  residual: ["mixed"]
+
+# Class weights for loss function (hazardous weighted higher for recall)
+class_weights:
+  recyclable: 1.0
+  reusable: 1.2
+  biodegradable: 1.0
+  hazardous: 3.0
+  residual: 1.0
+
+# Confidence threshold (tune on validation set)
+confidence_threshold: 0.60
+
+# Hazardous probability threshold for cautious guidance
+hazardous_caution_threshold: 0.20
+
+# Image preprocessing (ImageNet stats for pretrained MobileNetV3)
+image_size: 224
+normalize_mean: [0.485, 0.456, 0.406]
+normalize_std: [0.229, 0.224, 0.225]
+
+# Training (fine-tune head only: 3-5 epochs)
+batch_size: 32
+epochs: 5
+learning_rate: 0.001
+weight_decay: 1e-4
+num_workers: 4
+
+# HF Model config
+hf_model_repo: "AmadFR/ecovision_mobilenetv3"
+hf_model_file: "pytorch_model.bin"
+hf_num_source_classes: 10

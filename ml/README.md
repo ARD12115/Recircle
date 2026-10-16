@@ -1,0 +1,65 @@
+# ReCircle ML Module
+
+## Dataset
+- **Source**: [Kaggle Garbage Classification](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)
+- **License**: CC0 / MIT (verify on download)
+- **Classes**: 12 source labels → mapped to 5 output classes
+
+## Class Mapping
+| Source Label | Output Class | Subtype |
+|-------------|-------------|---------|
+| cardboard, paper | recyclable | paper / cardboard |
+| plastic | recyclable | plastic |
+| metal | recyclable | metal |
+| white/brown/green glass | recyclable | glass |
+| clothes, shoes | reusable | textile / footwear |
+| biological | biodegradable | organic |
+| battery | hazardous | battery |
+| trash | residual | mixed / non-recyclable |
+
+## Model
+- **Architecture**: MobileNetV3-Small (or ResNet18) with transfer learning
+- **Input**: 224×224 RGB
+- **Epochs**: 5–8
+- **Augmentation**: RandomHorizontalFlip, RandomRotation(15°), ColorJitter, RandomResizedCrop
+- **Loss**: CrossEntropy with class weights (hazardous: 3.0×)
+- **Optimizer**: AdamW (lr=1e-3, weight_decay=1e-4)
+- **Scheduler**: CosineAnnealingLR
+
+## Inference
+- **Confidence threshold**: 0.60 (tune on validation)
+- **Fallback**: Vision LLM (GPT-4V / Claude Vision) below threshold
+- **Hazardous caution**: >0.20 probability → "Do not put in general bin"
+
+## Scripts
+```bash
+# Download dataset
+python scripts/download_data.py
+
+# Prepare train/val/test split
+python scripts/prepare_dataset.py
+
+# Train model
+python scripts/train.py
+
+# Evaluate
+python scripts/evaluate.py
+
+# Export for backend
+python scripts/export.py
+```
+
+## Outputs
+- `weights/best.pt` — Model checkpoint (git-ignored, copied to backend at deploy)
+- `reports/metrics.json` — Test accuracy, per-class recall, confusion matrix
+- `reports/confusion_matrix.png` — Visualization
+- `data/prepared/` — Organized dataset (git-ignored)
+
+## Reproducibility
+- Random seed: 42 (PyTorch, NumPy, Python)
+- Deterministic CuDNN: `torch.backends.cudnn.deterministic = True`
+- Same seed = same results
+
+## Realism Check
+Place 20–30 photos from your phone in `own_photos/` before event.
+Run `evaluate.py` to test on real-world images.

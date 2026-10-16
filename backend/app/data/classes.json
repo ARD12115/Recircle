@@ -1,0 +1,39 @@
+{
+  "classes": [
+    {
+      "name": "recyclable",
+      "display_name": "Recyclable",
+      "color": "#3B82F6",
+      "icon": "recycle",
+      "subtypes": ["paper", "cardboard", "plastic", "metal", "glass"]
+    },
+    {
+      "name": "reusable",
+      "display_name": "Reusable",
+      "color": "#F59E0B",
+      "icon": "rotate-ccw",
+      "subtypes": ["textile", "footwear"]
+    },
+    {
+      "name": "biodegradable",
+      "display_name": "Biodegradable",
+      "color": "#22C55E",
+      "icon": "leaf",
+      "subtypes": ["organic"]
+    },
+    {
+      "name": "hazardous",
+      "display_name": "Hazardous",
+      "color": "#EF4444",
+      "icon": "skull",
+      "subtypes": ["battery"]
+    },
+    {
+      "name": "residual",
+      "display_name": "Residual",
+      "color": "#9CA3AF",
+      "icon": "trash-2",
+      "subtypes": ["mixed"]
+    }
+  ]
+}

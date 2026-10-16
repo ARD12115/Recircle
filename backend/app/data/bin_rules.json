@@ -1,0 +1,62 @@
+{
+  "recyclable": {
+    "paper": {
+      "bin": "Blue bin (Paper/Cardboard)",
+      "steps": ["Flatten boxes", "Remove plastic wrap", "Keep dry"],
+      "why": "Paper fibers recover well when clean and dry"
+    },
+    "cardboard": {
+      "bin": "Blue bin (Paper/Cardboard)",
+      "steps": ["Flatten", "Remove tape", "No greasy pizza boxes"],
+      "why": "Clean cardboard recycles to new boxes"
+    },
+    "plastic": {
+      "bin": "Yellow bin (Plastic/Metal)",
+      "steps": ["Rinse containers", "Leave caps on", "Check resin code 1,2,5"],
+      "why": "Clean plastics avoid contamination"
+    },
+    "metal": {
+      "bin": "Yellow bin (Plastic/Metal)",
+      "steps": ["Rinse cans", "No aerosol cans", "Aluminum foil clean"],
+      "why": "Metals infinitely recyclable"
+    },
+    "glass": {
+      "bin": "Green bin (Glass)",
+      "steps": ["Rinse jars", "Remove lids", "No ceramics/Pyrex"],
+      "why": "Glass recycles endlessly when separated"
+    }
+  },
+  "reusable": {
+    "textile": {
+      "bin": "Donation bin / Textile collection",
+      "steps": ["Wash if possible", "Bag separately", "Check local charity"],
+      "why": "Clothes/shoes reuse beats recycling"
+    },
+    "footwear": {
+      "bin": "Donation bin / Shoe collection",
+      "steps": ["Pair shoes", "Tie laces", "Good condition preferred"],
+      "why": "Footwear reuse extends life"
+    }
+  },
+  "biodegradable": {
+    "organic": {
+      "bin": "Green bin (Compost/Food waste)",
+      "steps": ["No plastic bags", "Remove packaging", "Drain liquids"],
+      "why": "Organic waste becomes compost/biogas"
+    }
+  },
+  "hazardous": {
+    "battery": {
+      "bin": "Hazardous collection point",
+      "steps": ["Tape terminals", "Do not crush", "Hand to staff"],
+      "why": "Lithium batteries ignite in compactors"
+    }
+  },
+  "residual": {
+    "mixed": {
+      "bin": "Black/Gray bin (Landfill)",
+      "steps": ["Last resort only", "Check other bins first"],
+      "why": "Non-recyclable, non-hazardous waste"
+    }
+  }
+}

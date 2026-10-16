@@ -1,0 +1,23 @@
+{
+  "recyclable": {
+    "paper": { "virgin_factor": 2.5, "recycled_factor": 0.5, "avg_weight_kg": 0.15 },
+    "cardboard": { "virgin_factor": 2.5, "recycled_factor": 0.5, "avg_weight_kg": 0.2 },
+    "plastic": { "virgin_factor": 3.0, "recycled_factor": 0.8, "avg_weight_kg": 0.15 },
+    "metal": { "virgin_factor": 8.0, "recycled_factor": 0.5, "avg_weight_kg": 0.1 },
+    "glass": { "virgin_factor": 1.2, "recycled_factor": 0.3, "avg_weight_kg": 0.3 }
+  },
+  "reusable": {
+    "textile": { "virgin_factor": 8.0, "recycled_factor": 0.2, "avg_weight_kg": 0.5 },
+    "footwear": { "virgin_factor": 12.0, "recycled_factor": 0.5, "avg_weight_kg": 0.8 }
+  },
+  "biodegradable": {
+    "organic": { "virgin_factor": 1.0, "recycled_factor": 0.1, "avg_weight_kg": 0.2 }
+  },
+  "hazardous": {
+    "battery": { "virgin_factor": 5.0, "recycled_factor": 1.0, "avg_weight_kg": 0.1 }
+  },
+  "residual": {
+    "mixed": { "virgin_factor": 0.0, "recycled_factor": 0.0, "avg_weight_kg": 0.2 }
+  },
+  "source": "EPA WARM v15 (2023) - placeholder values, cite before demo"
+}
