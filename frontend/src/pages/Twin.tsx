@@ -134,6 +134,8 @@ export function Twin() {
               <Controls />
               <MiniMap />
             </ReactFlow>
+          ) : twin ? (
+            <p className="p-6 text-gray-500">No waste-flow nodes are available yet.</p>
           ) : (
             <p className="text-gray-500">Loading graph...</p>
           )}

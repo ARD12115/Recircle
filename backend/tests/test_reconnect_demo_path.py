@@ -42,13 +42,13 @@ async def test_confirmed_scans_update_twin_and_persisted_metrics(db_session):
         id=10,
         type=NodeType.BIN,
         name="Recyclable Bin",
-        config_json={"accepts": "recyclable", "capacity": 10},
+        config_json={"capacity": 10},
     )
     residual_bin = TwinNode(
         id=14,
         type=NodeType.BIN,
         name="Residual Bin",
-        config_json={"accepts": "residual", "capacity": 10},
+        config_json={"capacity": 10},
     )
     scans = [
         Scan(
@@ -57,7 +57,7 @@ async def test_confirmed_scans_update_twin_and_persisted_metrics(db_session):
             confidence=0.9,
             top3="[]",
             source_node_id=1,
-            confirmed_bin="recyclable",
+            confirmed_bin=None,
             latency_ms=10,
         ),
         Scan(

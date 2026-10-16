@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.scan import Scan
 from app.models.twin import NodeType, TwinNode
-from app.services.twin.routing import normalize_bin_name
+from app.services.twin.routing import BIN_NODE_IDS, normalize_bin_name
 
 
 # Emission factors (kg CO2e per kg material)
@@ -179,9 +179,10 @@ async def compute_current_metrics(db: AsyncSession) -> MetricsResponse:
 
     nodes_result = await db.execute(select(TwinNode).where(TwinNode.type == NodeType.BIN))
     capacities = {}
+    bin_names_by_id = {node_id: name for name, node_id in BIN_NODE_IDS.items()}
     for node in nodes_result.scalars().all():
         config = node.config_json or {}
-        accepts = config.get("accepts")
+        accepts = config.get("accepts") or bin_names_by_id.get(node.id)
         if accepts:
             capacities[normalize_bin_name(accepts)] = max(1, config.get("capacity", 1))
 

@@ -7,7 +7,7 @@ import uuid
 from typing import Optional
 from fastapi import APIRouter, Depends, File, UploadFile, Form, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, update
 
 from app.core.config import settings
 from app.core.security import get_current_user, get_guest_user
@@ -170,10 +170,15 @@ async def confirm_scan_bin(
         current_user_id = int(user["sub"])
     if scan.user_id is not None and scan.user_id != current_user_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scan not found")
-    if scan.confirmed_bin is not None:
+    await seed_twin(db)
+    confirmation_result = await db.execute(
+        update(Scan)
+        .where(Scan.id == scan_pk, Scan.confirmed_bin.is_(None))
+        .values(confirmed_bin=confirmation.confirmed_bin)
+    )
+    if confirmation_result.rowcount != 1:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Bin choice has already been confirmed")
 
-    await seed_twin(db)
     scan.confirmed_bin = confirmation.confirmed_bin
     await ingest_scan_event(db, scan, confirmation.confirmed_bin)
 
