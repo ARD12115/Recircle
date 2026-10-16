@@ -16,6 +16,10 @@ from app.models.twin import TwinNode, TwinSnapshot
 from app.schemas.advice import AdviceResponse
 from app.schemas.twin import MetricsResponse
 from app.services.twin.routing import normalize_bin_name
+from app.core.logging import get_logger
+
+
+logger = get_logger(__name__)
 
 
 async def generate_advice(
@@ -84,44 +88,29 @@ async def generate_advice(
         {"role": "user", "content": USER_PROMPT_TEMPLATE.format(input_json=json.dumps(input_data, indent=2))},
     ]
     
-    # Call LLM
-    response_text = await llm_client.chat_completion(messages, temperature=0.1, max_tokens=1500)
-    
-    if response_text:
-        try:
-            advice_data = json.loads(response_text)
-            # Validate
-            validated = validate_advice_output(advice_data, input_data)
-            if validated:
-                # Log to DB
-                advice_log = AdviceLog(
-                    user_id=user_id,
-                    input_hash=input_hash,
-                    output_json=validated,
-                    provider=settings.LLM_PRIMARY_PROVIDER,
-                )
-                db.add(advice_log)
-                await db.commit()
-                return AdviceResponse(**validated, cached=False, provider=settings.LLM_PRIMARY_PROVIDER)
-        except json.JSONDecodeError:
-            pass
-    
-    # Fallback to template
-    template = build_template_advice(metrics, contamination_causes, hotspots)
-    
-    # Log template fallback
+    try:
+        response_text = await llm_client.chat_completion(
+            messages, temperature=0.1, max_tokens=1500
+        )
+        if not response_text:
+            return load_sample_advice()
+        advice_data = json.loads(response_text)
+        validated = validate_advice_output(advice_data, input_data)
+        if not validated:
+            return load_sample_advice()
+    except Exception as exc:
+        logger.warning("Advisor generation failed; using sample advice", error=str(exc))
+        return load_sample_advice()
+
     advice_log = AdviceLog(
         user_id=user_id,
         input_hash=input_hash,
-        output_json=template,
-        provider="template",
+        output_json=validated,
+        provider=settings.LLM_PRIMARY_PROVIDER,
     )
     db.add(advice_log)
     await db.commit()
-    
-    return AdviceResponse(**template, cached=True, provider="template")
-
-
+    return AdviceResponse(**validated, cached=False, provider=settings.LLM_PRIMARY_PROVIDER)
 def derive_advisor_context(
     scans: List[Scan],
     nodes: List[TwinNode],
@@ -210,3 +199,14 @@ def build_template_advice(
 
 # Need to import settings
 from app.core.config import settings
+
+
+def load_sample_advice() -> AdviceResponse:
+    """Load static advice for guest access and advisor outages."""
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "data" / "sample_advice.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data.pop("cached", None)
+    data.pop("provider", None)
+    return AdviceResponse(**data, cached=True, provider="sample")

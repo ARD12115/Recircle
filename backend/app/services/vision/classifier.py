@@ -72,6 +72,7 @@ def preprocess_image(image: Image.Image) -> torch.Tensor:
     if _model_config is None:
         raise RuntimeError("Model not loaded. Call load_model() first.")
     
+    image = image.convert("RGB")
     transform = transforms.Compose([
         transforms.Resize((_model_config["image_size"], _model_config["image_size"])),
         transforms.ToTensor(),

@@ -17,7 +17,7 @@ export function Login() {
     searchParams.get('mode') === 'demo' ? 'demo' : 'login'
   )
   const requestedPath = searchParams.get('next')
-  const redirectPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//')
+  const redirectPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') && !requestedPath.includes('\\')
     ? requestedPath
     : '/'
   

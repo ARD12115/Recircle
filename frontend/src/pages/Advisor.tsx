@@ -4,8 +4,11 @@ import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { adviceApi } from '../api/client'
 import { AdviceResponse } from '../types'
+import { useAuthStore } from '../stores/ui'
 
 export function Advisor() {
+  const { user } = useAuthStore()
+  const canChat = user?.role !== 'guest'
   const [advice, setAdvice] = useState<AdviceResponse | null>(null)
   const [chatMessages, setChatMessages] = useState<Array<{role: string, content: string}>>([])
   const [chatInput, setChatInput] = useState('')
@@ -65,14 +68,16 @@ export function Advisor() {
           >
             Advice Cards
           </button>
-          <button
-            onClick={() => setActiveTab('chat')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'chat' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Chat
-          </button>
+          {canChat && (
+            <button
+              onClick={() => setActiveTab('chat')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === 'chat' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Chat
+            </button>
+          )}
         </div>
       </div>
       
@@ -180,7 +185,7 @@ export function Advisor() {
         </div>
       )}
       
-      {activeTab === 'chat' && (
+      {activeTab === 'chat' && canChat && (
         <Card className="p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Chat with Advisor</h2>
           <p className="text-sm text-gray-500 mb-4">

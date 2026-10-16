@@ -39,7 +39,7 @@ export function App() {
         <Route path="twin" element={<PrivateRoute><Twin /></PrivateRoute>} />
         <Route path="simulate" element={<PrivateRoute><Simulate /></PrivateRoute>} />
         <Route path="impact" element={<PrivateRoute><Impact /></PrivateRoute>} />
-        <Route path="advisor" element={<PrivateRoute requiredRole="resident"><Advisor /></PrivateRoute>} />
+        <Route path="advisor" element={<PrivateRoute requiredRole="guest"><Advisor /></PrivateRoute>} />
         <Route path="history" element={<PrivateRoute requiredRole="resident"><History /></PrivateRoute>} />
         <Route path="facility" element={<PrivateRoute requiredRole="manager"><Facility /></PrivateRoute>} />
         <Route path="login" element={<Login />} />

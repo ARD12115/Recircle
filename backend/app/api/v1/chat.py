@@ -1,7 +1,8 @@
 """Advisor chat endpoint."""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.rate_limit import advice_limiter
 from app.core.security import get_resident_user
 from app.db.session import get_db
 from app.schemas.advice import ChatMessage, ChatRequest, ChatResponse
@@ -13,8 +14,10 @@ router = APIRouter()
 
 
 @router.post("", response_model=ChatResponse)
+@advice_limiter.limit("10/minute")
 async def chat_advisor(
-    request: ChatRequest,
+    request: Request,
+    chat_request: ChatRequest,
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_resident_user),
 ):
@@ -32,7 +35,7 @@ You are a helpful waste advisor. Answer questions about recycling, reuse, repair
         {"role": "system", "content": SYSTEM_PROMPT + "\n\n" + context},
         *[
             {"role": message.role, "content": message.content}
-            for message in request.messages
+            for message in chat_request.messages
         ],
     ]
     response_text = await llm_client.chat_completion(

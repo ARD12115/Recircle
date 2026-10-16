@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { path: '/twin', label: 'Twin', roles: ['guest', 'resident', 'manager', 'admin'] },
   { path: '/simulate', label: 'What-If', roles: ['guest', 'resident', 'manager', 'admin'] },
   { path: '/impact', label: 'Impact', roles: ['guest', 'resident', 'manager', 'admin'] },
-  { path: '/advisor', label: 'Advisor', roles: ['resident', 'manager', 'admin'] },
+  { path: '/advisor', label: 'Advisor', roles: ['guest', 'resident', 'manager', 'admin'] },
   { path: '/history', label: 'History', roles: ['resident', 'manager', 'admin'] },
   { path: '/facility', label: 'Facility', roles: ['manager', 'admin'] },
 ]

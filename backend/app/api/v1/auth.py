@@ -2,7 +2,8 @@
 Authentication Endpoints - Login, Refresh Token, Demo Accounts
 """
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
+from typing import Optional
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, status, Response, Request
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -33,7 +34,7 @@ class TokenResponse(BaseModel):
 
 
 class RefreshRequest(BaseModel):
-    refresh_token: str
+    refresh_token: Optional[str] = None
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -60,7 +61,7 @@ async def login(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(minutes=settings.JWT_ACCESS_MINUTES),
     )
-    refresh_token = create_access_token(
+    refresh_token = create_refresh_token(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(days=7),
     )
@@ -88,11 +89,16 @@ async def login(
 async def refresh_token(
     request: Request,
     response: Response,
-    refresh_token: str = None,
+    body: Optional[RefreshRequest] = Body(default=None),
+    refresh_token: Optional[str] = None,
+    authorization: Optional[str] = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     """Refresh access token using refresh token from cookie or body."""
-    # Try cookie first
+    if authorization and authorization.lower().startswith("bearer "):
+        refresh_token = authorization[7:].strip()
+    if not refresh_token and body:
+        refresh_token = body.refresh_token
     if not refresh_token:
         refresh_token = request.cookies.get("refresh_token")
     
@@ -122,7 +128,7 @@ async def refresh_token(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(minutes=settings.JWT_ACCESS_MINUTES),
     )
-    new_refresh = create_access_token(
+    new_refresh = create_refresh_token(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(days=7),
     )
@@ -153,7 +159,9 @@ async def demo_login(
     if not settings.DEMO_MODE:
         raise HTTPException(status_code=403, detail="Demo mode disabled")
     
-    valid_roles = ["guest", "resident", "manager", "admin"]
+    valid_roles = ["guest", "resident", "manager"] + (
+        ["admin"] if settings.DEMO_ALLOW_ADMIN else []
+    )
     if role not in valid_roles:
         raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {valid_roles}")
     
@@ -178,7 +186,7 @@ async def demo_login(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(minutes=settings.JWT_ACCESS_MINUTES),
     )
-    refresh_token = create_access_token(
+    refresh_token = create_refresh_token(
         {"sub": str(user.id), "email": user.email, "role": user.role},
         expires_delta=timedelta(days=7),
     )

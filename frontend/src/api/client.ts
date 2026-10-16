@@ -28,7 +28,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && refreshToken) {
       try {
         const res = await axios.post(`${API_BASE}/api/v1/auth/refresh`, {}, {
-          headers: {},
+          headers: { Authorization: `Bearer ${refreshToken}` },
         })
         setAccessToken(res.data.access_token)
         // Retry original request
@@ -76,7 +76,8 @@ export const adviceApi = {
 
 export const authApi = {
   login: (email: string, password: string) => api.post('/auth/login', { email, password }),
-  refresh: (refreshToken: string) => api.post('/auth/refresh', {}, { headers: {} }),
+  refresh: (refreshToken: string) =>
+    api.post('/auth/refresh', {}, { headers: { Authorization: `Bearer ${refreshToken}` } }),
   demo: (role: string) => api.post(`/auth/demo/${role}`),
   me: () => api.get('/auth/me'),
   logout: () => api.post('/auth/logout'),

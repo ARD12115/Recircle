@@ -48,7 +48,7 @@ async def scan_item(
     scan_id = str(uuid.uuid4())[:8]
     
     # Validate upload
-    file_bytes = await file.read()
+    file_bytes = await file.read(settings.MAX_UPLOAD_MB * 1024 * 1024 + 1)
     validate_upload(file.content_type, len(file_bytes))
     
     # Process image (strip EXIF, resize, re-encode)

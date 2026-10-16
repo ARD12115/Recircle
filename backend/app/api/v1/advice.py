@@ -8,7 +8,7 @@ from app.core.security import get_guest_user
 from app.core.rate_limit import advice_limiter
 from app.db.session import get_db
 from app.schemas.advice import AdviceResponse
-from app.services.advisor.advisor import generate_advice
+from app.services.advisor.advisor import generate_advice, load_sample_advice
 
 router = APIRouter()
 
@@ -22,5 +22,7 @@ async def get_advice(
     user: dict = Depends(get_guest_user),
 ):
     """Generate structured AI advice from twin metrics."""
+    if user.get("role") == "guest":
+        return load_sample_advice()
     user_id = int(user["sub"]) if not user.get("demo") else None
     return await generate_advice(db, user_id, use_cached)

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import get_admin_user
+from app.core.config import settings
 from app.db.session import get_db
 from app.services.twin.events import reset_demo_data
 from app.services.twin.generator import demo_generator
@@ -23,7 +24,7 @@ async def admin_demo_reset(
     await reset_demo_data(db)
     # Also reset generator
     await demo_generator.stop()
-    await demo_generator.start(db)
+    await demo_generator.start()
     return {"message": "Demo data reset and traffic generator restarted"}
 
 
@@ -37,7 +38,7 @@ async def admin_demo_traffic(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Demo mode disabled")
     """Start or stop demo traffic generator."""
     if start:
-        await demo_generator.start(db)
+        await demo_generator.start()
         return {"message": "Demo traffic generator started"}
     else:
         await demo_generator.stop()

@@ -33,6 +33,17 @@ const TECHNOLOGIES = [
   'Scenario simulation',
 ]
 
+const TICKER = [
+  'Plastic bottle → Recyclable',
+  'Battery → Hazardous',
+  'Banana peel → Compost',
+  'Old hoodie → Reusable',
+  'Greasy pizza box → Residual',
+  'Glass jar → Recyclable',
+  'Phone charger → Hazardous',
+  'Cardboard → Recyclable',
+]
+
 export function Landing() {
   const navigate = useNavigate()
   const { isDemo } = useAuthStore()
@@ -67,23 +78,61 @@ export function Landing() {
           </div>
         </div>
 
-        <figure className="hero-art">
-          <img
-            className="hero-photo"
-            src="/recycling-bins.jpg"
-            alt="Yellow, blue, red, and green recycling bins lined up on a campus walkway"
-            width="1400"
-            height="928"
-            loading="eager"
-          />
+        <figure className="hero-art" aria-label="Illustration of reusable and recyclable items heading to their bins">
+          <svg className="hero-svg" viewBox="0 0 520 440" role="img" aria-label="Bottle, banana peel, battery, and can above recycling bins">
+            <rect width="520" height="440" fill="#bfe0ff" />
+            <circle cx="400" cy="90" r="120" fill="#ffd23f" stroke="#1b1030" strokeWidth="4" />
+            <g stroke="#1b1030" strokeWidth="4" strokeLinejoin="round">
+              <g transform="translate(24 230)">
+                <rect width="130" height="120" rx="12" fill="#2b6cff" />
+                <rect x="-8" y="-14" width="146" height="22" rx="8" fill="#5aa9ff" />
+                <text x="65" y="76" textAnchor="middle" fontSize="40" fill="#fff" stroke="none">♻︎</text>
+              </g>
+              <g transform="translate(174 230)">
+                <rect width="130" height="120" rx="12" fill="#00b36b" />
+                <rect x="-8" y="-14" width="146" height="22" rx="8" fill="#3ddc97" />
+                <text x="65" y="76" textAnchor="middle" fontSize="40" fill="#fff" stroke="none">✿</text>
+              </g>
+              <g transform="translate(324 230)">
+                <rect width="130" height="120" rx="12" fill="#d7192b" />
+                <rect x="-8" y="-14" width="146" height="22" rx="8" fill="#ff5a6a" />
+                <text x="65" y="78" textAnchor="middle" fontSize="40" fill="#fff" stroke="none">⚠︎</text>
+              </g>
+              <g transform="translate(58 56) rotate(-14 20 60)">
+                <rect x="8" y="0" width="24" height="18" rx="4" fill="#fff" />
+                <path d="M6 18h28l8 22v70a10 10 0 0 1-10 10H8a10 10 0 0 1-10-10V40z" fill="#9fe3ff" />
+                <rect x="-2" y="56" width="44" height="26" fill="#fff" />
+              </g>
+              <g transform="translate(206 70) rotate(10)">
+                <path d="M0 40c20 40 70 50 100 10-10 20-50 26-70-8z" fill="#ffe13a" />
+                <path d="M0 40c10-26 40-36 60-26-18 4-40 14-60 26z" fill="#ffc400" />
+              </g>
+              <g transform="translate(340 50) rotate(16 30 40)">
+                <rect x="14" y="0" width="22" height="12" rx="3" fill="#fff" />
+                <rect x="0" y="10" width="50" height="86" rx="8" fill="#ffb020" />
+                <text x="25" y="64" textAnchor="middle" fontSize="30" fill="#1b1030" stroke="none">+</text>
+              </g>
+              <g transform="translate(440 150)">
+                <rect width="46" height="64" rx="6" fill="#c9c4d6" />
+                <rect x="0" y="14" width="46" height="22" fill="#ff3c8e" />
+              </g>
+            </g>
+            <path d="M120 200c40-40 80-40 120 0M300 200c40-40 80-40 120 0" fill="none" stroke="#ff3c8e" strokeWidth="6" strokeDasharray="10 10" strokeLinecap="round" />
+          </svg>
           <figcaption className="hero-caption">
-            <span className="text-xs font-bold uppercase tracking-[0.16em] text-lime-200">One campus. Many loops.</span>
-            <span className="mt-2 block max-w-sm text-2xl font-black leading-tight text-white sm:text-3xl">
+            <span className="text-xs font-bold uppercase tracking-[0.16em]">One campus. Many loops.</span>
+            <span className="mt-2 block max-w-sm text-2xl font-black leading-tight sm:text-3xl">
               Follow an item beyond the bin.
             </span>
           </figcaption>
         </figure>
       </section>
+
+      <div className="ticker" aria-label="Examples of what ReCircle sorts">
+        <div className="ticker-track" aria-hidden="true">
+          {[...TICKER, ...TICKER].map((item, index) => <span key={`${item}-${index}`}>{item}</span>)}
+        </div>
+      </div>
 
       {isDemo && (
         <div className="rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-amber-900" role="status">

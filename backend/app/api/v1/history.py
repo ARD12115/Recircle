@@ -1,6 +1,6 @@
 """Scan history endpoint."""
-from fastapi import APIRouter, Depends
-from sqlalchemy import desc, select
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import get_current_user
@@ -13,15 +13,17 @@ router = APIRouter()
 
 @router.get("", response_model=ScanHistoryResponse)
 async def get_scan_history(
-    page: int = 1,
-    page_size: int = 20,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
     """Get the authenticated user's paginated scan history."""
     user_id = int(user["sub"])
-    count_result = await db.execute(select(Scan).where(Scan.user_id == user_id))
-    total = len(count_result.scalars().all())
+    count_result = await db.execute(
+        select(func.count()).select_from(Scan).where(Scan.user_id == user_id)
+    )
+    total = count_result.scalar_one()
 
     result = await db.execute(
         select(Scan)

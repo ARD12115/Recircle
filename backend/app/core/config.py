@@ -24,16 +24,39 @@ class Settings(BaseSettings):
     
     # Authentication
     JWT_SECRET: str = "dev-secret-change-in-production-min-32-chars"
-    JWT_ACCESS_MINUTES: int = 15
+    JWT_ACCESS_MINUTES: int = 60
     JWT_ALGORITHM: str = "HS256"
     
     # CORS
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    @field_validator('CORS_ORIGINS', mode='before')
+    @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v: str) -> List[str]:
-        return [origin.strip() for origin in v.split(",") if origin.strip()]
+    def parse_cors_origins(cls, value: object) -> str:
+        if isinstance(value, list):
+            return ",".join(str(origin).strip() for origin in value if str(origin).strip())
+        if not isinstance(value, str):
+            raise ValueError("CORS_ORIGINS must be a comma-separated string or list")
+        value = value.strip()
+        if value.startswith("["):
+            import json
+
+            try:
+                origins = json.loads(value)
+            except json.JSONDecodeError as exc:
+                raise ValueError("CORS_ORIGINS contains invalid JSON") from exc
+            if not isinstance(origins, list):
+                raise ValueError("CORS_ORIGINS JSON value must be a list")
+            return ",".join(str(origin).strip() for origin in origins if str(origin).strip())
+        return value
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+
+    # Demo controls
+    DEMO_ALLOW_ADMIN: bool = False
+    DEMO_TRAFFIC: bool = False
     
     # Model
     MODEL_PATH: str = "./app/data/weights/model.pt"

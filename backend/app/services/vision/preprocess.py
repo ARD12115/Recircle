@@ -2,7 +2,7 @@
 Vision Preprocess - Validate, strip EXIF, resize
 """
 import io
-from PIL import Image
+from PIL import Image, ImageOps
 from fastapi import HTTPException, status
 from app.core.config import settings
 
@@ -53,7 +53,8 @@ def process_image(image_bytes: bytes) -> Image.Image:
             detail=f"Image too large ({image.width}x{image.height}). Max {MAX_PIXELS} pixels",
         )
     
-    # Strip EXIF/GPS data
+    # Apply EXIF orientation before discarding metadata.
+    image = ImageOps.exif_transpose(image)
     data = list(image.getdata())
     image_without_exif = Image.new(image.mode, image.size)
     image_without_exif.putdata(data)
