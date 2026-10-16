@@ -100,35 +100,6 @@ def load_knowledge_base() -> List[str]:
 
 # Template fallback for when LLM is unavailable
 TEMPLATE_ADVICE = {
-    "summary": "Campus waste system shows {diversion_rate:.0%} diversion with {contamination_rate:.0%} contamination in target bins. {total_items} items tracked, {recovered_items} recovered.",
-    "issues": [
-        "Contamination in recyclable bins reduces recycling yield",
-        "Organic waste in residual bins misses composting opportunity",
-        "Hazardous items occasionally found in general waste",
-    ],
-    "actions": [
-        {
-            "title": "Launch targeted bin signage campaign",
-            "why": "Contamination rate of {contamination_rate:.0%} suggests confusion about what goes where",
-            "expected_impact": "Reduce contamination by 3-5 percentage points",
-            "effort": "low",
-            "owner": "facilities",
-        },
-        {
-            "title": "Add organic bins at Canteen",
-            "why": "Canteen generates 60% biodegradable waste but contamination is high",
-            "expected_impact": "Increase diversion by 8-12%",
-            "effort": "medium",
-            "owner": "management",
-        },
-        {
-            "title": "Hazardous waste awareness drive",
-            "why": "Batteries found in general waste pose fire risk",
-            "expected_impact": "Eliminate hazardous in residual stream",
-            "effort": "low",
-            "owner": "residents",
-        },
-    ],
     "reuse_ideas": [
         "Glass jars → storage containers, planters",
         "Cardboard boxes → organizers, compost brown material",

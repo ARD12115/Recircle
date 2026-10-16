@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactFlowProvider } from 'react-flow-renderer'
-import App from './App'
+import { App } from './App'
 import './styles/globals.css'
 
 const queryClient = new QueryClient({

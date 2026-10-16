@@ -2,7 +2,7 @@ interface MetricCardProps {
   label: string
   value: number | undefined
   format: 'percent' | 'kg' | 'currency' | 'number'
-  trend: number
+  trend?: number
   negative?: boolean
 }
 
@@ -23,14 +23,14 @@ export function MetricCard({ label, value, format, trend, negative = false }: Me
     }
   }
   
-  const trendColor = trend > 0 ? (negative ? 'text-red-600' : 'text-green-600') : 
-                     trend < 0 ? (negative ? 'text-green-600' : 'text-red-600') : 'text-gray-400'
+  const trendColor = trend !== undefined && trend > 0 ? (negative ? 'text-red-600' : 'text-green-600') :
+                     trend !== undefined && trend < 0 ? (negative ? 'text-green-600' : 'text-red-600') : 'text-gray-400'
   
-  const trendIcon = trend > 0 ? (
+  const trendIcon = trend !== undefined && trend > 0 ? (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
     </svg>
-  ) : trend < 0 ? (
+  ) : trend !== undefined && trend < 0 ? (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
     </svg>
@@ -47,12 +47,14 @@ export function MetricCard({ label, value, format, trend, negative = false }: Me
           <p className="text-sm font-medium text-gray-600">{label}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1 tabular-nums">{formatValue(value)}</p>
         </div>
-        <div className={`flex items-center gap-1 ${trendColor}`}>
-          {trendIcon}
-          <span className="text-sm font-medium tabular-nums">
-            {trend > 0 ? '+' : ''}{trend.toFixed(1)}%
-          </span>
-        </div>
+        {trend !== undefined && (
+          <div className={`flex items-center gap-1 ${trendColor}`}>
+            {trendIcon}
+            <span className="text-sm font-medium tabular-nums">
+              {trend > 0 ? '+' : ''}{trend.toFixed(1)}%
+            </span>
+          </div>
+        )}
       </div>
     </div>
   )

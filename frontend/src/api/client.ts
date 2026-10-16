@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '../stores/ui'
+import { ScanConfirmationResponse, ScanResult, TwinResponse } from '../types'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
@@ -50,20 +51,22 @@ api.interceptors.response.use(
 )
 
 export const scanApi = {
-  scan: (file: File, sourceNodeId?: number, confirmedBin?: string) => {
+  scan: (file: File, sourceNodeId?: number) => {
     const form = new FormData()
     form.append('file', file)
-    if (sourceNodeId) form.append('source_node_id', String(sourceNodeId))
-    if (confirmedBin) form.append('confirmed_bin', confirmedBin)
-    return api.post('/scan', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+    if (sourceNodeId !== undefined) form.append('source_node_id', String(sourceNodeId))
+    return api.post<ScanResult>('/scan', form, { headers: { 'Content-Type': 'multipart/form-data' } })
   },
+  confirm: (scanId: string, confirmedBin: string) =>
+    api.post<ScanConfirmationResponse>(`/scan/${scanId}/confirm`, { confirmed_bin: confirmedBin }),
   history: (page = 1, pageSize = 20) => api.get('/scans', { params: { page, page_size: pageSize } }),
 }
 
 export const twinApi = {
-  get: () => api.get('/twin'),
+  get: () => api.get<TwinResponse>('/twin'),
   stream: () => `${API_BASE}/api/v1/twin/stream`,
-  simulate: (params: any) => api.post('/simulate', params),
+  simulate: (params: import('../types').SimulateParams) =>
+    api.post<import('../types').SimulateResponse>('/simulate', params),
 }
 
 export const adviceApi = {

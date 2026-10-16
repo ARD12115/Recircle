@@ -1,4 +1,4 @@
-import { ScanResult } from '../../../types/scan'
+import { ScanResult } from '../../types'
 
 interface UncertainStateProps {
   result: ScanResult

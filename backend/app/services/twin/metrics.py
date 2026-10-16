@@ -1,9 +1,15 @@
 """
 Twin Metrics - Diversion, contamination, CO2e, pickup cost
 """
+import math
 from typing import Dict, Any
 from app.schemas.twin import MetricsResponse
-from datetime import datetime
+from datetime import datetime, timezone
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.scan import Scan
+from app.models.twin import NodeType, TwinNode
+from app.services.twin.routing import normalize_bin_name
 
 
 # Emission factors (kg CO2e per kg material)
@@ -148,16 +154,49 @@ def compute_pickup_cost(nodes: Dict[int, Dict]) -> float:
     return trips * PICKUP_COST_PER_TRIP
 
 
-async def compute_current_metrics(db) -> MetricsResponse:
-    """Compute metrics from database state."""
-    # This would query the DB for current state
-    # For now, return placeholder
+async def compute_current_metrics(db: AsyncSession) -> MetricsResponse:
+    """Compute current metrics from scans and confirmed bin choices in the database."""
+    result = await db.execute(select(Scan))
+    scans = result.scalars().all()
+    confirmed = [scan for scan in scans if normalize_bin_name(scan.confirmed_bin) in {
+        "recyclable", "reusable", "biodegradable", "hazardous", "residual"
+    }]
+    recovered_by_class = {name: 0 for name in EMISSION_FACTORS}
+    confirmed_by_bin: Dict[str, int] = {}
+    contamination_total = 0
+    contaminated_items = 0
+
+    for scan in confirmed:
+        confirmed_bin = normalize_bin_name(scan.confirmed_bin)
+        confirmed_by_bin[confirmed_bin] = confirmed_by_bin.get(confirmed_bin, 0) + 1
+        predicted_class = scan.predicted_class.value if hasattr(scan.predicted_class, "value") else scan.predicted_class
+        if confirmed_bin != "residual":
+            recovered_by_class[predicted_class] += 1
+        if confirmed_bin in ("recyclable", "biodegradable"):
+            contamination_total += 1
+            if predicted_class != confirmed_bin:
+                contaminated_items += 1
+
+    nodes_result = await db.execute(select(TwinNode).where(TwinNode.type == NodeType.BIN))
+    capacities = {}
+    for node in nodes_result.scalars().all():
+        config = node.config_json or {}
+        accepts = config.get("accepts")
+        if accepts:
+            capacities[normalize_bin_name(accepts)] = max(1, config.get("capacity", 1))
+
+    trips = sum(
+        math.ceil(count / capacities.get(bin_name, 1))
+        for bin_name, count in confirmed_by_bin.items()
+    )
+    recovered_items = sum(recovered_by_class.values())
+    total_items = len(scans)
     return MetricsResponse(
-        diversion_rate=0.0,
-        contamination_rate=0.0,
-        co2e_avoided_kg=0.0,
-        pickup_cost=0.0,
-        total_items=0,
-        recovered_items=0,
-        timestamp=datetime.utcnow(),
+        diversion_rate=recovered_items / total_items if total_items else 0.0,
+        contamination_rate=contaminated_items / contamination_total if contamination_total else 0.0,
+        co2e_avoided_kg=compute_co2e_avoided(recovered_by_class),
+        pickup_cost=trips * PICKUP_COST_PER_TRIP,
+        total_items=total_items,
+        recovered_items=recovered_items,
+        timestamp=datetime.now(timezone.utc),
     )

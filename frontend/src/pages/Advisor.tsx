@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { Card } from '../../components/ui/Card'
-import { Button } from '../../components/ui/Button'
-import { adviceApi } from '../../api/client'
-import { AdviceResponse, AdviceAction } from '../../types'
+import { useMutation } from '@tanstack/react-query'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { adviceApi } from '../api/client'
+import { AdviceResponse } from '../types'
 
 export function Advisor() {
   const [advice, setAdvice] = useState<AdviceResponse | null>(null)

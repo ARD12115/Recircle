@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react/query'
-import { Card } from '../../components/ui/Card'
-import { twinApi } from '../../api/client'
-import { MetricCard } from '../../components/twin/MetricCard'
-import { AdviceResponse } from '../../types'
-import { adviceApi } from '../../api/client'
+import { useQuery } from '@tanstack/react-query'
+import { Card } from '../components/ui/Card'
+import { twinApi, adviceApi } from '../api/client'
+import { MetricCard } from '../components/twin/MetricCard'
+import { AdviceResponse } from '../types'
 
 export function Impact() {
   const { data: twinData } = useQuery({

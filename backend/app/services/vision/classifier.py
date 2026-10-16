@@ -37,11 +37,11 @@ def load_model():
     config_path = Path(settings.MODEL_CONFIG_PATH)
     
     if not model_path.exists():
-        print(f"WARNING: Model not found at {model_path}. Classification will fail.")
+        print(f"WARNING: Model not found at {model_path}. Scans will use the configured fallback or return unsure.")
         return False
     
     if not config_path.exists():
-        print(f"WARNING: Model config not found at {config_path}")
+        print(f"WARNING: Model config not found at {config_path}. Scans will use the configured fallback or return unsure.")
         return False
     
     with open(config_path) as f:

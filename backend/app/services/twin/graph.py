@@ -95,8 +95,8 @@ def get_default_seed() -> Dict[str, Any]:
 
 async def seed_twin(db: AsyncSession) -> None:
     """Seed database with twin topology if empty."""
-    result = await db.execute(select(TwinNode))
-    if result.scalar_one_or_none():
+    result = await db.execute(select(TwinNode.id).limit(1))
+    if result.scalar_one_or_none() is not None:
         return  # Already seeded
     
     seed = load_twin_seed()
